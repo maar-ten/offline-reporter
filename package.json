@@ -1,0 +1,17 @@
+{
+  "name": "internet-connectivity",
+  "version": "1.1.0",
+  "description": "periodically checks for an internet connections and logs any downtime it detects",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "is-online": "8.1.0",
+    "moment": "2.24.0",
+    "node-slackr": "1.0.1",
+    "rx-lite": "4.0.8",
+    "rx-lite-time": "4.0.8",
+    "rxjs": "6.4.0",
+    "simple-node-logger": "18.12.22"
+  }
+}
