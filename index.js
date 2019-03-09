@@ -1,9 +1,9 @@
 const SimpleNodeLogger = require('simple-node-logger');
 const Rx = require('rx-lite-time');
 const isOnline = require('is-online');
-const Slack = require('node-slackr');
-const moment = require('moment');
-const settings = require('./settings.json');
+const fs = require('fs');
+
+const settingsPath = './settings.json';
 
 const log = SimpleNodeLogger.createRollingFileLogger({
     logDirectory: 'logs',
@@ -22,17 +22,14 @@ const connectivity$ = Rx.Observable.interval(10000)
 const isOffline$ = connectivity$.filter(online => online === false);
 isOffline$.subscribe(() => log.error('No Internet'));
 
-howLongWasTheInternetDown$ = connectivity$
-    .distinctUntilChanged(online => online === false)
-    .skip(1) // first element comes when the program starts (prevents a false alert)
-    .timeInterval()
-    .filter(connectivityChanged => connectivityChanged.value === true)
-    .map(connectivityChanged => connectivityChanged.interval)
-    .map(interval => moment.duration(interval))
-    .map(duration => duration.add(connectivityTimeout, 'ms'))
-    .map(duration => duration.as('seconds'))
-    .map(duration => Math.round(duration) + ' seconds')
-    .map(txtDuration => 'Internet was down for ' + txtDuration + ' :unamused:');
+fs.exists(settingsPath, exists => {
+    if (!exists) {
+        return;
+    }
 
-const slack = new Slack(settings.slack_webhook_url);
-howLongWasTheInternetDown$.subscribe(msg => slack.notify(msg));
+    const settings = require(settingsPath);
+    if (settings && settings.slack_webhook_url) {
+        const postToSlack = require('./post-to-slack');
+        postToSlack(connectivity$, connectivityTimeout, settings.slack_webhook_url);
+    }
+});
