@@ -1,4 +1,4 @@
-const Slack = require('node-slackr');
+const { IncomingWebhook } = require('@slack/webhook');
 const moment = require('moment');
 
 function postToSlack(connectivity$, connectivityTimeout, slackWebhookUrl) {
@@ -14,8 +14,8 @@ function postToSlack(connectivity$, connectivityTimeout, slackWebhookUrl) {
         .map(duration => Math.round(duration) + ' seconds')
         .map(txtDuration => 'Internet was down for ' + txtDuration + ' :unamused:');
 
-    const slack = new Slack(slackWebhookUrl);
-    howLongWasTheInternetDown$.subscribe(msg => slack.notify(msg));
+    const slack = new IncomingWebhook(slackWebhookUrl);
+    howLongWasTheInternetDown$.subscribe(msg => slack.send(msg));
 }
 
 module.exports = postToSlack;
