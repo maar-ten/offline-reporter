@@ -12,7 +12,7 @@
   "dependencies": {
     "@slack/webhook": "5.0.4",
     "is-online": "8.1.0",
-    "moment": "2.24.0",
+    "moment": "2.29.2",
     "rx-lite": "4.0.8",
     "rx-lite-time": "4.0.8",
     "rxjs": "6.4.0",
